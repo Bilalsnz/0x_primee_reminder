@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeRemind - Multi-Alarm App</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #38bdf8;
+            --text: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 { text-align: center; color: var(--accent); }
+
+        .input-group {
+            background: var(--card);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            color: #0f172a;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        button:active { transform: scale(0.98); }
+
+        .reminder-item {
+            background: var(--card);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--accent);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .time-tag { font-weight: bold; color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>VibeRemind</h1>
+    
+    <div class="input-group">
+        <input type="text" id="taskName" placeholder="What's the reminder?">
+        <input type="time" id="taskTime">
+        <button onclick="addReminder()">Set Reminder</button>
+    </div>
+
+    <div id="reminderList"></div>
+</div>
+
+<script>
+    const reminders = [];
+
+    function addReminder() {
+        const name = document.getElementById('taskName').value;
+        const time = document.getElementById('taskTime').value;
+
+        if (!name || !time) {
+            alert("Please fill in both fields!");
+            return;
+        }
+
+        const reminder = { name, time, id: Date.now(), triggered: false };
+        reminders.push(reminder);
+        renderReminders();
+        
+        // Clear inputs
+        document.getElementById('taskName').value = '';
+        document.getElementById('taskTime').value = '';
+    }
+
+    function renderReminders() {
+        const list = document.getElementById('reminderList');
+        list.innerHTML = '';
+
+        reminders.sort((a, b) => a.time.localeCompare(b.time)).forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'reminder-item';
+            div.innerHTML = `
+                <div>
+                    <div>${r.name}</div>
+                    <div class="time-tag">${r.time}</div>
+                </div>
+                <button style="width: auto; padding: 5px 10px; background: #ef4444; color: white;" 
+                        onclick="deleteReminder(${r.id})">Cancel</button>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    function deleteReminder(id) {
+        const index = reminders.findIndex(r => r.id === id);
+        if (index > -1) reminders.splice(index, 1);
+        renderReminders();
+    }
+
+    // Check for alarms every second
+    setInterval(() => {
+        const now = new Date();
+        const currentTime = now.getHours().toString().padStart(2, '0') + ":" + 
+                            now.getMinutes().toString().padStart(2, '0');
+
+        reminders.forEach(r => {
+            if (r.time === currentTime && !r.triggered) {
+                r.triggered = true;
+                alert(`⏰ REMINDER: ${r.name}`);
+            }
+        });
+    }, 1000);
+</script>
+
+</body>
+</html>
