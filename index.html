@@ -7,18 +7,23 @@
     <style>
         :root {
             --bg: #0f172a;
-            --card: #1e293b;
+            --card: rgba(30, 41, 59, 0.85); /* Made slightly transparent to show background */
             --accent: #38bdf8;
             --text: #f1f5f9;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
+            /* Replace 'your-image-name.jpg' with the exact name of the file you uploaded */
+            background-image: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url('your-image-name.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: var(--text);
             display: flex;
             justify-content: center;
             padding: 40px;
+            min-height: 100vh;
         }
 
         .container {
@@ -26,7 +31,7 @@
             max-width: 400px;
         }
 
-        h1 { text-align: center; color: var(--accent); }
+        h1 { text-align: center; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
 
         .input-group {
             background: var(--card);
@@ -34,6 +39,7 @@
             border-radius: 12px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px); /* Adds a nice frosted glass effect */
         }
 
         input {
@@ -71,6 +77,7 @@
             align-items: center;
             border-left: 4px solid var(--accent);
             animation: slideIn 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
         @keyframes slideIn {
@@ -111,7 +118,6 @@
         reminders.push(reminder);
         renderReminders();
         
-        // Clear inputs
         document.getElementById('taskName').value = '';
         document.getElementById('taskTime').value = '';
     }
@@ -141,7 +147,6 @@
         renderReminders();
     }
 
-    // Check for alarms every second
     setInterval(() => {
         const now = new Date();
         const currentTime = now.getHours().toString().padStart(2, '0') + ":" + 
